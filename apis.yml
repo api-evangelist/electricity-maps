@@ -1,8 +1,8 @@
 aid: electricity-maps
 name: Electricity Maps
 description: >-
-  Welcome to the Electricity Maps API! You can use the API to get access to
-  information about: 
+  Welcome to the Electricity Maps API! You can use the API to get access to information
+  about:.
 type: Index
 position: Consumer
 access: 3rd-Party
@@ -18,8 +18,8 @@ apis:
   - aid: electricity-maps:electricity-maps
     name: Electricity Maps
     description: >-
-      Welcome to the Electricity Maps API! You can use the API to get access to
-      information about: 
+      Welcome to the Electricity Maps API! You can use the API to get access to information
+      about:.
     humanURL: ' https://portal.electricitymaps.com/docs/getting-started#introduction'
     tags:
       - API
