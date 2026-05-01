@@ -1,0 +1,378 @@
+openapi: 3.1.0
+info:
+  title: Electricity Maps API
+  description: >-
+    The Electricity Maps API delivers real-time, historical, and forecasted
+    electricity grid signals worldwide, including carbon intensity, power
+    breakdown by source, renewable and carbon-free percentages, electricity
+    flows, total and net load, and day-ahead pricing. Each signal is
+    available in three temporality variants (latest, past, forecast) and can
+    be queried by zone identifier, geographic coordinates, or data center
+    provider/region.
+  version: '3.0'
+  contact:
+    name: Electricity Maps Support
+    url: https://www.electricitymaps.com/contact
+  license:
+    name: Commercial
+    url: https://www.electricitymaps.com/api-pricing
+externalDocs:
+  description: Electricity Maps API Documentation
+  url: https://app.electricitymaps.com/docs/getting-started
+servers:
+  - url: https://api.electricitymap.org
+    description: Production
+tags:
+  - name: Zones
+    description: Discover available zones and locate them by coordinates or data center.
+  - name: CarbonIntensity
+    description: Carbon intensity (gCO2eq/kWh) signals.
+  - name: ElectricityMix
+    description: Power production and consumption breakdown by source.
+  - name: Renewables
+    description: Renewable and carbon-free percentage signals.
+  - name: GridMetrics
+    description: Total load, net load, and electricity flows between zones.
+  - name: Pricing
+    description: Day-ahead electricity pricing.
+security:
+  - authToken: []
+  - basicAuth: []
+paths:
+  /v3/zones:
+    get:
+      operationId: listZones
+      summary: List available zones
+      description: >-
+        Returns the list of zones supported by the API. This endpoint does
+        not require authentication.
+      tags:
+        - Zones
+      security: []
+      responses:
+        '200':
+          description: Map of zone identifiers to zone metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Zone'
+  /v3/zone:
+    get:
+      operationId: locateZone
+      summary: Locate a zone by coordinates
+      tags:
+        - Zones
+      parameters:
+        - name: lon
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Zone matched at the supplied coordinates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+        '404':
+          description: No zone covers the supplied coordinates
+  /v3/data-centers:
+    get:
+      operationId: listDataCenters
+      summary: List available data centers
+      tags:
+        - Zones
+      responses:
+        '200':
+          description: Data center list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataCenter'
+  /v3/carbon-intensity/{temporality}:
+    get:
+      operationId: getCarbonIntensity
+      summary: Get carbon intensity signal
+      description: >-
+        Returns carbon intensity in gCO2eq/kWh for the requested zone and
+        temporality.
+      tags:
+        - CarbonIntensity
+      parameters:
+        - $ref: '#/components/parameters/Temporality'
+        - $ref: '#/components/parameters/Zone'
+        - $ref: '#/components/parameters/Lon'
+        - $ref: '#/components/parameters/Lat'
+        - $ref: '#/components/parameters/TemporalGranularity'
+        - $ref: '#/components/parameters/EmissionFactorType'
+        - $ref: '#/components/parameters/DisableEstimations'
+      responses:
+        '200':
+          description: Carbon intensity signal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignalResponse'
+  /v3/fossil-only-carbon-intensity/{temporality}:
+    get:
+      operationId: getFossilOnlyCarbonIntensity
+      summary: Get fossil-only carbon intensity
+      tags:
+        - CarbonIntensity
+      parameters:
+        - $ref: '#/components/parameters/Temporality'
+        - $ref: '#/components/parameters/Zone'
+      responses:
+        '200':
+          description: Signal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignalResponse'
+  /v3/electricity-mix/{temporality}:
+    get:
+      operationId: getElectricityMix
+      summary: Get electricity mix
+      description: Power production and consumption breakdown by source.
+      tags:
+        - ElectricityMix
+      parameters:
+        - $ref: '#/components/parameters/Temporality'
+        - $ref: '#/components/parameters/Zone'
+        - $ref: '#/components/parameters/TemporalGranularity'
+      responses:
+        '200':
+          description: Electricity mix response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignalResponse'
+  /v3/renewable-percentage/{temporality}:
+    get:
+      operationId: getRenewablePercentage
+      summary: Get renewable percentage
+      tags:
+        - Renewables
+      parameters:
+        - $ref: '#/components/parameters/Temporality'
+        - $ref: '#/components/parameters/Zone'
+      responses:
+        '200':
+          description: Renewable percentage signal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignalResponse'
+  /v3/carbon-free-percentage/{temporality}:
+    get:
+      operationId: getCarbonFreePercentage
+      summary: Get carbon-free percentage
+      tags:
+        - Renewables
+      parameters:
+        - $ref: '#/components/parameters/Temporality'
+        - $ref: '#/components/parameters/Zone'
+      responses:
+        '200':
+          description: Carbon-free percentage signal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignalResponse'
+  /v3/total-load/{temporality}:
+    get:
+      operationId: getTotalLoad
+      summary: Get total load
+      tags:
+        - GridMetrics
+      parameters:
+        - $ref: '#/components/parameters/Temporality'
+        - $ref: '#/components/parameters/Zone'
+      responses:
+        '200':
+          description: Total load signal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignalResponse'
+  /v3/net-load/{temporality}:
+    get:
+      operationId: getNetLoad
+      summary: Get net load
+      tags:
+        - GridMetrics
+      parameters:
+        - $ref: '#/components/parameters/Temporality'
+        - $ref: '#/components/parameters/Zone'
+      responses:
+        '200':
+          description: Net load signal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignalResponse'
+  /v3/electricity-flows/{temporality}:
+    get:
+      operationId: getElectricityFlows
+      summary: Get electricity flows
+      tags:
+        - GridMetrics
+      parameters:
+        - $ref: '#/components/parameters/Temporality'
+        - $ref: '#/components/parameters/Zone'
+      responses:
+        '200':
+          description: Electricity flows signal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignalResponse'
+  /v3/day-ahead-price/{temporality}:
+    get:
+      operationId: getDayAheadPrice
+      summary: Get day-ahead price
+      tags:
+        - Pricing
+      parameters:
+        - $ref: '#/components/parameters/Temporality'
+        - $ref: '#/components/parameters/Zone'
+      responses:
+        '200':
+          description: Day-ahead price signal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignalResponse'
+components:
+  securitySchemes:
+    authToken:
+      type: apiKey
+      in: header
+      name: auth-token
+      description: API token issued from the Electricity Maps portal.
+    basicAuth:
+      type: http
+      scheme: basic
+  parameters:
+    Temporality:
+      name: temporality
+      in: path
+      required: true
+      description: Time horizon of the signal.
+      schema:
+        type: string
+        enum:
+          - latest
+          - past
+          - forecast
+    Zone:
+      name: zone
+      in: query
+      description: Zone identifier (e.g., SE, DE, US-CAL-CISO).
+      schema:
+        type: string
+    Lon:
+      name: lon
+      in: query
+      description: Longitude (used in place of zone).
+      schema:
+        type: number
+    Lat:
+      name: lat
+      in: query
+      description: Latitude (used in place of zone).
+      schema:
+        type: number
+    TemporalGranularity:
+      name: temporalGranularity
+      in: query
+      description: Temporal aggregation of the response.
+      schema:
+        type: string
+        enum:
+          - 5_minutes
+          - 15_minutes
+          - hourly
+          - daily
+          - monthly
+          - quarterly
+          - yearly
+        default: hourly
+    EmissionFactorType:
+      name: emissionFactorType
+      in: query
+      description: Emission factor methodology.
+      schema:
+        type: string
+        enum:
+          - lifecycle
+          - direct
+        default: lifecycle
+    DisableEstimations:
+      name: disableEstimations
+      in: query
+      description: Exclude estimated data points.
+      schema:
+        type: boolean
+        default: false
+  schemas:
+    Zone:
+      type: object
+      properties:
+        zoneName:
+          type: string
+        countryName:
+          type: string
+        access:
+          type: array
+          items:
+            type: string
+    DataCenter:
+      type: object
+      properties:
+        provider:
+          type: string
+        region:
+          type: string
+        zone:
+          type: string
+    SignalResponse:
+      type: object
+      properties:
+        zone:
+          type: string
+        datetime:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        isEstimated:
+          type: boolean
+        estimationMethod:
+          type: string
+          nullable: true
+        temporalGranularity:
+          type: string
+        emissionFactorType:
+          type: string
+        history:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        forecast:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
