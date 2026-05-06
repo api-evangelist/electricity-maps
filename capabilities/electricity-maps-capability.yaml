@@ -1,0 +1,434 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Electricity Maps API
+  description: The Electricity Maps API delivers real-time, historical, and forecasted electricity grid signals worldwide,
+    including carbon intensity, power breakdown by source, renewable and carbon-free percentages, electricity flows, total
+    and net load, and day-ahead pricing. Each signal is available in three temporality variants (latest, past, forecast) and
+    can be queried by zone identifier, geographic coordinates, or data center provider/region.
+  tags:
+  - Electricity
+  - Maps
+  - API
+  created: '2026-05-06'
+  modified: '2026-05-06'
+capability:
+  consumes:
+  - type: http
+    namespace: electricity-maps
+    baseUri: https://api.electricitymap.org
+    description: Electricity Maps API HTTP API.
+    authentication:
+      type: apikey
+      in: header
+      name: auth-token
+      value: '{{ELECTRICITY_MAPS_TOKEN}}'
+    resources:
+    - name: v3-zones
+      path: /v3/zones
+      operations:
+      - name: listzones
+        method: GET
+        description: List available zones
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-zone
+      path: /v3/zone
+      operations:
+      - name: locatezone
+        method: GET
+        description: Locate a zone by coordinates
+        inputParameters:
+        - name: lon
+          in: query
+          type: number
+          required: true
+        - name: lat
+          in: query
+          type: number
+          required: true
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-data-centers
+      path: /v3/data-centers
+      operations:
+      - name: listdatacenters
+        method: GET
+        description: List available data centers
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-carbon-intensity-temporality
+      path: /v3/carbon-intensity/{temporality}
+      operations:
+      - name: getcarbonintensity
+        method: GET
+        description: Get carbon intensity signal
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-fossil-only-carbon-intensity-temporality
+      path: /v3/fossil-only-carbon-intensity/{temporality}
+      operations:
+      - name: getfossilonlycarbonintensity
+        method: GET
+        description: Get fossil-only carbon intensity
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-electricity-mix-temporality
+      path: /v3/electricity-mix/{temporality}
+      operations:
+      - name: getelectricitymix
+        method: GET
+        description: Get electricity mix
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-renewable-percentage-temporality
+      path: /v3/renewable-percentage/{temporality}
+      operations:
+      - name: getrenewablepercentage
+        method: GET
+        description: Get renewable percentage
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-carbon-free-percentage-temporality
+      path: /v3/carbon-free-percentage/{temporality}
+      operations:
+      - name: getcarbonfreepercentage
+        method: GET
+        description: Get carbon-free percentage
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-total-load-temporality
+      path: /v3/total-load/{temporality}
+      operations:
+      - name: gettotalload
+        method: GET
+        description: Get total load
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-net-load-temporality
+      path: /v3/net-load/{temporality}
+      operations:
+      - name: getnetload
+        method: GET
+        description: Get net load
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-electricity-flows-temporality
+      path: /v3/electricity-flows/{temporality}
+      operations:
+      - name: getelectricityflows
+        method: GET
+        description: Get electricity flows
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-day-ahead-price-temporality
+      path: /v3/day-ahead-price/{temporality}
+      operations:
+      - name: getdayaheadprice
+        method: GET
+        description: Get day-ahead price
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  exposes:
+  - type: rest
+    port: 8080
+    namespace: electricity-maps-rest
+    description: REST adapter for Electricity Maps API.
+    resources:
+    - path: /v3/zones
+      name: listzones
+      operations:
+      - method: GET
+        name: listzones
+        description: List available zones
+        call: electricity-maps.listzones
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/zone
+      name: locatezone
+      operations:
+      - method: GET
+        name: locatezone
+        description: Locate a zone by coordinates
+        call: electricity-maps.locatezone
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/data-centers
+      name: listdatacenters
+      operations:
+      - method: GET
+        name: listdatacenters
+        description: List available data centers
+        call: electricity-maps.listdatacenters
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/carbon-intensity/{temporality}
+      name: getcarbonintensity
+      operations:
+      - method: GET
+        name: getcarbonintensity
+        description: Get carbon intensity signal
+        call: electricity-maps.getcarbonintensity
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/fossil-only-carbon-intensity/{temporality}
+      name: getfossilonlycarbonintensity
+      operations:
+      - method: GET
+        name: getfossilonlycarbonintensity
+        description: Get fossil-only carbon intensity
+        call: electricity-maps.getfossilonlycarbonintensity
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/electricity-mix/{temporality}
+      name: getelectricitymix
+      operations:
+      - method: GET
+        name: getelectricitymix
+        description: Get electricity mix
+        call: electricity-maps.getelectricitymix
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/renewable-percentage/{temporality}
+      name: getrenewablepercentage
+      operations:
+      - method: GET
+        name: getrenewablepercentage
+        description: Get renewable percentage
+        call: electricity-maps.getrenewablepercentage
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/carbon-free-percentage/{temporality}
+      name: getcarbonfreepercentage
+      operations:
+      - method: GET
+        name: getcarbonfreepercentage
+        description: Get carbon-free percentage
+        call: electricity-maps.getcarbonfreepercentage
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/total-load/{temporality}
+      name: gettotalload
+      operations:
+      - method: GET
+        name: gettotalload
+        description: Get total load
+        call: electricity-maps.gettotalload
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/net-load/{temporality}
+      name: getnetload
+      operations:
+      - method: GET
+        name: getnetload
+        description: Get net load
+        call: electricity-maps.getnetload
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/electricity-flows/{temporality}
+      name: getelectricityflows
+      operations:
+      - method: GET
+        name: getelectricityflows
+        description: Get electricity flows
+        call: electricity-maps.getelectricityflows
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v3/day-ahead-price/{temporality}
+      name: getdayaheadprice
+      operations:
+      - method: GET
+        name: getdayaheadprice
+        description: Get day-ahead price
+        call: electricity-maps.getdayaheadprice
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    port: 9090
+    namespace: electricity-maps-mcp
+    transport: http
+    description: MCP adapter for Electricity Maps API for AI agent use.
+    tools:
+    - name: listzones
+      description: List available zones
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.listzones
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: locatezone
+      description: Locate a zone by coordinates
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.locatezone
+      with:
+        lon: tools.lon
+        lat: tools.lat
+      inputParameters:
+      - name: lon
+        type: number
+        description: lon
+        required: true
+      - name: lat
+        type: number
+        description: lat
+        required: true
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listdatacenters
+      description: List available data centers
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.listdatacenters
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getcarbonintensity
+      description: Get carbon intensity signal
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.getcarbonintensity
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getfossilonlycarbonintensity
+      description: Get fossil-only carbon intensity
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.getfossilonlycarbonintensity
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getelectricitymix
+      description: Get electricity mix
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.getelectricitymix
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getrenewablepercentage
+      description: Get renewable percentage
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.getrenewablepercentage
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getcarbonfreepercentage
+      description: Get carbon-free percentage
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.getcarbonfreepercentage
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: gettotalload
+      description: Get total load
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.gettotalload
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getnetload
+      description: Get net load
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.getnetload
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getelectricityflows
+      description: Get electricity flows
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.getelectricityflows
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getdayaheadprice
+      description: Get day-ahead price
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps.getdayaheadprice
+      outputParameters:
+      - type: object
+        mapping: $.
+binds:
+- namespace: env
+  keys:
+    ELECTRICITY_MAPS_TOKEN: ELECTRICITY_MAPS_TOKEN
