@@ -1,0 +1,136 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Electricity Maps API — GridMetrics
+  description: 'Electricity Maps API — GridMetrics. 3 operations. Lead operation: Get electricity flows. Self-contained Naftiko
+    capability covering one Electricity Maps business surface.'
+  tags:
+  - Electricity Maps
+  - GridMetrics
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ELECTRICITY_MAPS_API_KEY: ELECTRICITY_MAPS_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: electricity-maps-gridmetrics
+    baseUri: https://api.electricitymap.org
+    description: Electricity Maps API — GridMetrics business capability. Self-contained, no shared references.
+    resources:
+    - name: v3-electricity-flows-temporality
+      path: /v3/electricity-flows/{temporality}
+      operations:
+      - name: getelectricityflows
+        method: GET
+        description: Get electricity flows
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-net-load-temporality
+      path: /v3/net-load/{temporality}
+      operations:
+      - name: getnetload
+        method: GET
+        description: Get net load
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-total-load-temporality
+      path: /v3/total-load/{temporality}
+      operations:
+      - name: gettotalload
+        method: GET
+        description: Get total load
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: apikey
+      key: auth-token
+      value: '{{env.ELECTRICITY_MAPS_API_KEY}}'
+      placement: header
+  exposes:
+  - type: rest
+    namespace: electricity-maps-gridmetrics-rest
+    port: 8080
+    description: REST adapter for Electricity Maps API — GridMetrics. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/v3/electricity-flows/{temporality}
+      name: v3-electricity-flows-temporality
+      description: REST surface for v3-electricity-flows-temporality.
+      operations:
+      - method: GET
+        name: getelectricityflows
+        description: Get electricity flows
+        call: electricity-maps-gridmetrics.getelectricityflows
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v3/net-load/{temporality}
+      name: v3-net-load-temporality
+      description: REST surface for v3-net-load-temporality.
+      operations:
+      - method: GET
+        name: getnetload
+        description: Get net load
+        call: electricity-maps-gridmetrics.getnetload
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v3/total-load/{temporality}
+      name: v3-total-load-temporality
+      description: REST surface for v3-total-load-temporality.
+      operations:
+      - method: GET
+        name: gettotalload
+        description: Get total load
+        call: electricity-maps-gridmetrics.gettotalload
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: electricity-maps-gridmetrics-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Electricity Maps API — GridMetrics. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: get-electricity-flows
+      description: Get electricity flows
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-gridmetrics.getelectricityflows
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-net-load
+      description: Get net load
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-gridmetrics.getnetload
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-total-load
+      description: Get total load
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-gridmetrics.gettotalload
+      outputParameters:
+      - type: object
+        mapping: $.

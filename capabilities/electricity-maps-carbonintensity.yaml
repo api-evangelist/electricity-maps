@@ -1,0 +1,104 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Electricity Maps API — CarbonIntensity
+  description: 'Electricity Maps API — CarbonIntensity. 2 operations. Lead operation: Get carbon intensity signal. Self-contained
+    Naftiko capability covering one Electricity Maps business surface.'
+  tags:
+  - Electricity Maps
+  - CarbonIntensity
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ELECTRICITY_MAPS_API_KEY: ELECTRICITY_MAPS_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: electricity-maps-carbonintensity
+    baseUri: https://api.electricitymap.org
+    description: Electricity Maps API — CarbonIntensity business capability. Self-contained, no shared references.
+    resources:
+    - name: v3-carbon-intensity-temporality
+      path: /v3/carbon-intensity/{temporality}
+      operations:
+      - name: getcarbonintensity
+        method: GET
+        description: Get carbon intensity signal
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-fossil-only-carbon-intensity-temporality
+      path: /v3/fossil-only-carbon-intensity/{temporality}
+      operations:
+      - name: getfossilonlycarbonintensity
+        method: GET
+        description: Get fossil-only carbon intensity
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: apikey
+      key: auth-token
+      value: '{{env.ELECTRICITY_MAPS_API_KEY}}'
+      placement: header
+  exposes:
+  - type: rest
+    namespace: electricity-maps-carbonintensity-rest
+    port: 8080
+    description: REST adapter for Electricity Maps API — CarbonIntensity. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/v3/carbon-intensity/{temporality}
+      name: v3-carbon-intensity-temporality
+      description: REST surface for v3-carbon-intensity-temporality.
+      operations:
+      - method: GET
+        name: getcarbonintensity
+        description: Get carbon intensity signal
+        call: electricity-maps-carbonintensity.getcarbonintensity
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v3/fossil-only-carbon-intensity/{temporality}
+      name: v3-fossil-only-carbon-intensity-temporality
+      description: REST surface for v3-fossil-only-carbon-intensity-temporality.
+      operations:
+      - method: GET
+        name: getfossilonlycarbonintensity
+        description: Get fossil-only carbon intensity
+        call: electricity-maps-carbonintensity.getfossilonlycarbonintensity
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: electricity-maps-carbonintensity-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Electricity Maps API — CarbonIntensity. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: get-carbon-intensity-signal
+      description: Get carbon intensity signal
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-carbonintensity.getcarbonintensity
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-fossil-only-carbon-intensity
+      description: Get fossil-only carbon intensity
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-carbonintensity.getfossilonlycarbonintensity
+      outputParameters:
+      - type: object
+        mapping: $.

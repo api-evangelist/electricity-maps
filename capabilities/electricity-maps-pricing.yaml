@@ -1,0 +1,72 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Electricity Maps API — Pricing
+  description: 'Electricity Maps API — Pricing. 1 operations. Lead operation: Get day-ahead price. Self-contained Naftiko
+    capability covering one Electricity Maps business surface.'
+  tags:
+  - Electricity Maps
+  - Pricing
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ELECTRICITY_MAPS_API_KEY: ELECTRICITY_MAPS_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: electricity-maps-pricing
+    baseUri: https://api.electricitymap.org
+    description: Electricity Maps API — Pricing business capability. Self-contained, no shared references.
+    resources:
+    - name: v3-day-ahead-price-temporality
+      path: /v3/day-ahead-price/{temporality}
+      operations:
+      - name: getdayaheadprice
+        method: GET
+        description: Get day-ahead price
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: apikey
+      key: auth-token
+      value: '{{env.ELECTRICITY_MAPS_API_KEY}}'
+      placement: header
+  exposes:
+  - type: rest
+    namespace: electricity-maps-pricing-rest
+    port: 8080
+    description: REST adapter for Electricity Maps API — Pricing. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/v3/day-ahead-price/{temporality}
+      name: v3-day-ahead-price-temporality
+      description: REST surface for v3-day-ahead-price-temporality.
+      operations:
+      - method: GET
+        name: getdayaheadprice
+        description: Get day-ahead price
+        call: electricity-maps-pricing.getdayaheadprice
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: electricity-maps-pricing-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Electricity Maps API — Pricing. One tool per consumed operation, routed inline through this
+      capability's consumes block.
+    tools:
+    - name: get-day-ahead-price
+      description: Get day-ahead price
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-pricing.getdayaheadprice
+      outputParameters:
+      - type: object
+        mapping: $.

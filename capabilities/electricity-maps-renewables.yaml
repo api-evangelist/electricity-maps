@@ -1,0 +1,104 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Electricity Maps API — Renewables
+  description: 'Electricity Maps API — Renewables. 2 operations. Lead operation: Get carbon-free percentage. Self-contained
+    Naftiko capability covering one Electricity Maps business surface.'
+  tags:
+  - Electricity Maps
+  - Renewables
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ELECTRICITY_MAPS_API_KEY: ELECTRICITY_MAPS_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: electricity-maps-renewables
+    baseUri: https://api.electricitymap.org
+    description: Electricity Maps API — Renewables business capability. Self-contained, no shared references.
+    resources:
+    - name: v3-carbon-free-percentage-temporality
+      path: /v3/carbon-free-percentage/{temporality}
+      operations:
+      - name: getcarbonfreepercentage
+        method: GET
+        description: Get carbon-free percentage
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-renewable-percentage-temporality
+      path: /v3/renewable-percentage/{temporality}
+      operations:
+      - name: getrenewablepercentage
+        method: GET
+        description: Get renewable percentage
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: apikey
+      key: auth-token
+      value: '{{env.ELECTRICITY_MAPS_API_KEY}}'
+      placement: header
+  exposes:
+  - type: rest
+    namespace: electricity-maps-renewables-rest
+    port: 8080
+    description: REST adapter for Electricity Maps API — Renewables. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/v3/carbon-free-percentage/{temporality}
+      name: v3-carbon-free-percentage-temporality
+      description: REST surface for v3-carbon-free-percentage-temporality.
+      operations:
+      - method: GET
+        name: getcarbonfreepercentage
+        description: Get carbon-free percentage
+        call: electricity-maps-renewables.getcarbonfreepercentage
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v3/renewable-percentage/{temporality}
+      name: v3-renewable-percentage-temporality
+      description: REST surface for v3-renewable-percentage-temporality.
+      operations:
+      - method: GET
+        name: getrenewablepercentage
+        description: Get renewable percentage
+        call: electricity-maps-renewables.getrenewablepercentage
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: electricity-maps-renewables-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Electricity Maps API — Renewables. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: get-carbon-free-percentage
+      description: Get carbon-free percentage
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-renewables.getcarbonfreepercentage
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-renewable-percentage
+      description: Get renewable percentage
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-renewables.getrenewablepercentage
+      outputParameters:
+      - type: object
+        mapping: $.

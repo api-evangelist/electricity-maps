@@ -1,0 +1,151 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Electricity Maps API — Zones
+  description: 'Electricity Maps API — Zones. 3 operations. Lead operation: List available data centers. Self-contained Naftiko
+    capability covering one Electricity Maps business surface.'
+  tags:
+  - Electricity Maps
+  - Zones
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ELECTRICITY_MAPS_API_KEY: ELECTRICITY_MAPS_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: electricity-maps-zones
+    baseUri: https://api.electricitymap.org
+    description: Electricity Maps API — Zones business capability. Self-contained, no shared references.
+    resources:
+    - name: v3-data-centers
+      path: /v3/data-centers
+      operations:
+      - name: listdatacenters
+        method: GET
+        description: List available data centers
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: v3-zone
+      path: /v3/zone
+      operations:
+      - name: locatezone
+        method: GET
+        description: Locate a zone by coordinates
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: lon
+          in: query
+          type: number
+          required: true
+        - name: lat
+          in: query
+          type: number
+          required: true
+    - name: v3-zones
+      path: /v3/zones
+      operations:
+      - name: listzones
+        method: GET
+        description: List available zones
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: apikey
+      key: auth-token
+      value: '{{env.ELECTRICITY_MAPS_API_KEY}}'
+      placement: header
+  exposes:
+  - type: rest
+    namespace: electricity-maps-zones-rest
+    port: 8080
+    description: REST adapter for Electricity Maps API — Zones. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/v3/data-centers
+      name: v3-data-centers
+      description: REST surface for v3-data-centers.
+      operations:
+      - method: GET
+        name: listdatacenters
+        description: List available data centers
+        call: electricity-maps-zones.listdatacenters
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v3/zone
+      name: v3-zone
+      description: REST surface for v3-zone.
+      operations:
+      - method: GET
+        name: locatezone
+        description: Locate a zone by coordinates
+        call: electricity-maps-zones.locatezone
+        with:
+          lon: rest.lon
+          lat: rest.lat
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v3/zones
+      name: v3-zones
+      description: REST surface for v3-zones.
+      operations:
+      - method: GET
+        name: listzones
+        description: List available zones
+        call: electricity-maps-zones.listzones
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: electricity-maps-zones-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Electricity Maps API — Zones. One tool per consumed operation, routed inline through this
+      capability's consumes block.
+    tools:
+    - name: list-available-data-centers
+      description: List available data centers
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-zones.listdatacenters
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: locate-zone-coordinates
+      description: Locate a zone by coordinates
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-zones.locatezone
+      with:
+        lon: tools.lon
+        lat: tools.lat
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: list-available-zones
+      description: List available zones
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: electricity-maps-zones.listzones
+      outputParameters:
+      - type: object
+        mapping: $.
