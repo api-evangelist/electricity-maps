@@ -8,7 +8,7 @@ description: >-
 type: Index
 position: Producer
 access: 3rd-Party
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
   - Energy
   - Electricity
@@ -30,7 +30,7 @@ apis:
       data-center lookups with configurable temporal granularity and emission factor type.
     humanURL: https://app.electricitymaps.com/docs/getting-started
     baseURL: https://api.electricitymap.org
-    image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     tags:
       - Energy
       - Carbon Intensity
