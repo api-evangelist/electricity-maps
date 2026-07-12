@@ -46,6 +46,10 @@ maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
 common:
+  - type: DomainSecurity
+    url: security/electricity-maps-domain-security.yml
+  - type: Authentication
+    url: authentication/electricity-maps-authentication.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/electricitymaps
   - name: Electricity Maps Website
