@@ -46,6 +46,8 @@ maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
 common:
+  - type: AgenticAccess
+    url: agentic-access/electricity-maps-agentic-access.yml
   - type: DomainSecurity
     url: security/electricity-maps-domain-security.yml
   - type: Authentication
