@@ -6,9 +6,22 @@ description: >-
   carbon-free percentages, electricity flows, grid load, and day-ahead pricing across hundreds of geographic zones,
   enabling data centers, software platforms, and sustainability teams to make emissions-aware decisions.
 type: Index
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
 position: Producer
 access: 3rd-Party
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/electricity-maps.png
 tags:
   - Energy
   - Electricity
@@ -21,27 +34,78 @@ modified: '2026-05-19'
 url: https://raw.githubusercontent.com/api-evangelist/electricity-maps/refs/heads/main/apis.yml
 specificationVersion: '0.19'
 apis:
-  - aid: electricity-maps:electricity-maps
-    name: Electricity Maps API
-    description: >-
-      The Electricity Maps API exposes carbon intensity, electricity mix, renewable and carbon-free percentages,
-      electricity flows, total and net load, and day-ahead pricing for hundreds of zones worldwide. Each signal is
-      available in three temporality variants (latest, past, and forecast) and supports zone, coordinate, and
-      data-center lookups with configurable temporal granularity and emission factor type.
-    humanURL: https://app.electricitymaps.com/docs/getting-started
-    baseURL: https://api.electricitymap.org
-    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-    tags:
-      - Energy
-      - Carbon Intensity
-      - Renewables
-      - Grid Data
-      - Forecasting
-    properties:
-      - type: Documentation
-        url: https://app.electricitymaps.com/docs/getting-started
-      - type: OpenAPI
-        url: openapi/electricity-maps-openapi.yml
+- aid: electricity-maps:electricity-maps-carbonintensity-api
+  name: Electricity Maps CarbonIntensity API
+  description: Carbon intensity (gCO2eq/kWh) signals.
+  humanURL: https://app.electricitymaps.com/docs/getting-started
+  baseURL: https://api.electricitymap.org
+  tags:
+  - CarbonIntensity
+  properties:
+  - type: OpenAPI
+    url: openapi/electricity-maps-carbonintensity-api-openapi.yml
+  - type: Documentation
+    url: https://app.electricitymaps.com/docs/getting-started
+- aid: electricity-maps:electricity-maps-electricitymix-api
+  name: Electricity Maps ElectricityMix API
+  description: Power production and consumption breakdown by source.
+  humanURL: https://app.electricitymaps.com/docs/getting-started
+  baseURL: https://api.electricitymap.org
+  tags:
+  - ElectricityMix
+  properties:
+  - type: OpenAPI
+    url: openapi/electricity-maps-electricitymix-api-openapi.yml
+  - type: Documentation
+    url: https://app.electricitymaps.com/docs/getting-started
+- aid: electricity-maps:electricity-maps-gridmetrics-api
+  name: Electricity Maps GridMetrics API
+  description: Total load, net load, and electricity flows between zones.
+  humanURL: https://app.electricitymaps.com/docs/getting-started
+  baseURL: https://api.electricitymap.org
+  tags:
+  - GridMetrics
+  properties:
+  - type: OpenAPI
+    url: openapi/electricity-maps-gridmetrics-api-openapi.yml
+  - type: Documentation
+    url: https://app.electricitymaps.com/docs/getting-started
+- aid: electricity-maps:electricity-maps-pricing-api
+  name: Electricity Maps Pricing API
+  description: Day-ahead electricity pricing.
+  humanURL: https://app.electricitymaps.com/docs/getting-started
+  baseURL: https://api.electricitymap.org
+  tags:
+  - Pricing
+  properties:
+  - type: OpenAPI
+    url: openapi/electricity-maps-pricing-api-openapi.yml
+  - type: Documentation
+    url: https://app.electricitymaps.com/docs/getting-started
+- aid: electricity-maps:electricity-maps-renewables-api
+  name: Electricity Maps Renewables API
+  description: Renewable and carbon-free percentage signals.
+  humanURL: https://app.electricitymaps.com/docs/getting-started
+  baseURL: https://api.electricitymap.org
+  tags:
+  - Renewables
+  properties:
+  - type: OpenAPI
+    url: openapi/electricity-maps-renewables-api-openapi.yml
+  - type: Documentation
+    url: https://app.electricitymaps.com/docs/getting-started
+- aid: electricity-maps:electricity-maps-zones-api
+  name: Electricity Maps Zones API
+  description: Discover available zones and locate them by coordinates or data center.
+  humanURL: https://app.electricitymaps.com/docs/getting-started
+  baseURL: https://api.electricitymap.org
+  tags:
+  - Zones
+  properties:
+  - type: OpenAPI
+    url: openapi/electricity-maps-zones-api-openapi.yml
+  - type: Documentation
+    url: https://app.electricitymaps.com/docs/getting-started
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
