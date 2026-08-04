@@ -1,0 +1,24 @@
+{
+  "provider": "electricity-maps",
+  "sources": [
+    "electricity-maps-carbonintensity-api-openapi.yml",
+    "electricity-maps-electricitymix-api-openapi.yml",
+    "electricity-maps-gridmetrics-api-openapi.yml",
+    "electricity-maps-pricing-api-openapi.yml",
+    "electricity-maps-renewables-api-openapi.yml",
+    "electricity-maps-zones-api-openapi.yml"
+  ],
+  "outputs": [
+    "electricity-maps-carbonintensity-api-openapi.yml",
+    "electricity-maps-electricitymix-api-openapi.yml",
+    "electricity-maps-gridmetrics-api-openapi.yml",
+    "electricity-maps-pricing-api-openapi.yml",
+    "electricity-maps-renewables-api-openapi.yml",
+    "electricity-maps-zones-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
